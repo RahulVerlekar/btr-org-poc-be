@@ -28,6 +28,7 @@ class SecurityConfig(
             .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers("/", "/auth/**").permitAll()
+                    .requestMatchers("/token_success.html", "/oauth_error.html", "/css/**", "/js/**", "/images/**").permitAll()
                     .requestMatchers(org.springframework.http.HttpMethod.POST, "/user").permitAll()
                     .dispatcherTypeMatchers(
                         DispatcherType.ERROR,

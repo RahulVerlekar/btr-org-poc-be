@@ -46,6 +46,9 @@ dependencies {
 	implementation("com.google.apis:google-api-services-gmail:v1-rev20240520-2.0.0")
 	implementation("software.amazon.awssdk:s3:2.31.50")
 	implementation("software.amazon.awssdk:apache-client:2.31.50")
+
+//	implementation(platform("org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT"))
+//	implementation("org.springframework.ai:spring-ai-openai")
 }
 
 kotlin {

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Authentication Error</title>
+    <script type="text/javascript">
+        function closeWindowWithError() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const errorMessage = urlParams.get('error') || 'An unknown error occurred during authentication.';
+
+          // Display the error message on the page
+          document.getElementById('errorMessage').innerText = errorMessage;
+
+          // Optional: Communicate the error back to the parent window that opened this popup.
+          if (window.opener) {
+            // IMPORTANT: Replace 'YOUR_PARENT_ORIGIN' with the actual origin (protocol + hostname + port)
+            // of the page that opened this popup.
+            // Example: "https://your-main-app.com", "http://localhost:3000", or "https://java.specifics.fyi"
+            window.opener.postMessage({ status: 'error', message: errorMessage }, 'YOUR_PARENT_ORIGIN');
+          }
+          // Close the current popup window after a short delay to allow user to see message
+          setTimeout(function() {
+            window.close();
+          }, 3000); // Closes after 3 seconds
+        }
+
+        // Call the function when the page loads.
+        window.onload = closeWindowWithError;
+    </script>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          display: flex;
+          flex-direction: column; /* Changed to column for better layout with message */
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          margin: 0;
+          background-color: #f8d7da; /* Light red for error background */
+          color: #721c24; /* Dark red for text */
+          text-align: center;
+        }
+        .container {
+          padding: 30px;
+          border-radius: 8px;
+          background-color: #f5c6cb; /* Slightly darker red for container */
+          border: 1px solid #dc3545; /* Red border */
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+          color: #dc3545; /* Red for error heading */
+          margin-bottom: 15px;
+        }
+        p {
+          font-size: 1.1em;
+          line-height: 1.5;
+          margin-bottom: 10px; /* Space out paragraphs */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>❌ Authentication Failed!</h1>
+    <p id="errorMessage">An error occurred during the authentication process.</p>
+    <p>Please close this window and try again.</p>
+    <p>This page will close automatically in a few seconds.</p>
+</div>
+</body>
+</html>

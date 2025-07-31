@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.servlet.view.RedirectView
 import xyz.betterorg.backend_poc.app.dto.AuthResponse
 import xyz.betterorg.backend_poc.app.dto.LoginUserRequest
 import xyz.betterorg.backend_poc.app.security.HashEncoder
@@ -15,6 +16,8 @@ import xyz.betterorg.backend_poc.app.service.GmailService
 import xyz.betterorg.backend_poc.data.database.entity.AuthCode
 import xyz.betterorg.backend_poc.data.database.repo.AuthCodeRepository
 import xyz.betterorg.backend_poc.data.database.repo.UserRepository
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @RestController
 @RequestMapping("/auth")
@@ -51,10 +54,18 @@ class AuthController(
     fun gmailCallback(
         @RequestParam("code") code: String,
         @RequestParam("state") state: String
-    ): AuthCode {
-        val authCode = gmailService.fetchTokensFromAuthCode(code, state)
-        gmailService.asyncFetchEmails(state, authCode.accessToken ?: "")
-        return authCode;
+    ): RedirectView {
+        try {
+            val authCode = gmailService.fetchTokensFromAuthCode(code, state)
+            gmailService.asyncFetchEmails(state, authCode.accessToken ?: "")
+            return RedirectView("/token_success.html");
+        }
+        catch (e: Exception) {
+            System.err.println("Error during OAuth callback for user " + state + ": " + e.message)
+            e.printStackTrace()
+            val encodedErrorMessage: String? = URLEncoder.encode(e.message, StandardCharsets.UTF_8)
+            return RedirectView("/oauth_error.html?error=$encodedErrorMessage")
+        }
     }
 
 }

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Authentication Complete</title>
+    <script type="text/javascript">
+        function closeWindow() {
+          if (window.opener) {
+            window.opener.postMessage({ status: 'success', message: 'Token fetched successfully!' }, 'https://java.specifics.fyi');
+          }
+          // Close the current popup window.
+          window.close();
+        }
+
+        window.onload = closeWindow; // Closes immediately on load
+    </script>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          margin: 0;
+          background-color: #f0f0f0;
+          color: #333;
+          text-align: center;
+        }
+        .container {
+          padding: 30px;
+          border-radius: 8px;
+          background-color: #ffffff;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+          color: #28a745; /* Green for success */
+          margin-bottom: 15px;
+        }
+        p {
+          font-size: 1.1em;
+          line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🎉 Token Successfully Fetched!</h1>
+    <p>You can now close this window.</p>
+    <p>This page should close automatically.</p>
+</div>
+</body>
+</html>

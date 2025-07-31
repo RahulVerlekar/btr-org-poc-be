@@ -9,9 +9,12 @@ import com.google.api.services.gmail.model.Message
 import com.google.api.services.gmail.model.MessagePart
 import jakarta.validation.constraints.Future
 import org.bson.types.ObjectId
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
+import xyz.betterorg.backend_poc.app.config.RequestLoggingInterceptor
 import xyz.betterorg.backend_poc.data.database.entity.AuthCode
 import xyz.betterorg.backend_poc.data.database.entity.Email
 import xyz.betterorg.backend_poc.data.database.repo.AuthCodeRepository
@@ -30,8 +33,10 @@ class GmailService(
     private val mediaService: MediaService,
     private val authRepo: AuthCodeRepository
 ) {
+
     private var token: String? = ""
     private var gmail: Gmail? = null
+    private val logger: Logger = LoggerFactory.getLogger(RequestLoggingInterceptor::class.java)
 
     fun withToken(token: String): GmailService {
         this.token = token
@@ -156,7 +161,7 @@ class GmailService(
             id,
             secret,
             authCode,
-            "http://localhost:8085/auth/gmail/callback"
+            "https://java.specifics.fyi/auth/gmail/callback"
         ).execute()
 
         val authCode = AuthCode(
@@ -176,6 +181,8 @@ class GmailService(
         return CompletableFuture.runAsync {
             withToken(token).fetchAndSaveEmails(userId, 2000L)
         }.exceptionally { ex ->
+            ex.printStackTrace()
+            logger.error(ex.message)
             println("Error fetching emails: ${ex.message}")
             null
         }

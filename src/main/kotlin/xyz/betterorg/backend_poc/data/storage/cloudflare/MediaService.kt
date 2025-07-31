@@ -1,4 +1,4 @@
-package xyz.betterorg.backend_poc.app.service
+package xyz.betterorg.backend_poc.data.storage.cloudflare
 
 import com.google.api.services.gmail.model.Message
 import io.jsonwebtoken.io.IOException
@@ -12,11 +12,20 @@ import xyz.betterorg.backend_poc.app.errors.FileUploadException
 import xyz.betterorg.backend_poc.app.errors.UnsupportedMediaTypeException
 import java.util.UUID
 
+enum class DocumentType {
+    IMAGE,
+    DOCUMENT,
+    TEXT,
+    OTHER
+}
+
 @Service
 class MediaService(
     @Value("\${cloudflare.r2.bucket}") private val bucket: String,
     private val client: S3Client
 ) {
+
+
 
     public fun upload(message: Message): Map<String, String> {
         val parts = message.payload.parts ?: return emptyMap()
@@ -28,7 +37,7 @@ class MediaService(
             val filename = part.filename
             val contentType = part.mimeType ?: "application/octet-stream"
             val ext = getFileExtension(filename)
-            val folder = when (ext?.lowercase()) {
+            val folder = when (ext?.toLowerCase()) {
                 "jpg", "jpeg", "png", "gif" -> "images"
                 "mp4", "avi", "mov" -> "videos"
                 "mp3", "wav" -> "audio"
